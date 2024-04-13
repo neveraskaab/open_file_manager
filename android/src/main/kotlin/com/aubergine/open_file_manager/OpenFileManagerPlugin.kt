@@ -1,8 +1,11 @@
 package com.aubergine.open_file_manager
 
-import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Environment
+import java.io.File
+import android.app.DownloadManager
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
