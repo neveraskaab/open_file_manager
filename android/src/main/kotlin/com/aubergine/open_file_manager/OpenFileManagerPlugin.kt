@@ -39,27 +39,21 @@ class OpenFileManagerPlugin : FlutterPlugin, MethodCallHandler {
         channel.setMethodCallHandler(null)
     }
 
-    private fun openFileManager(result: Result) {
+    private fun openFileFlowFolder(result: Result) {
+    val context = context.applicationContext
     try {
-        // Get the external storage directory and append your specific path
-        val fileManagerIntent = Intent(Intent.ACTION_VIEW)
-        val downloadsPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        val specificFolderPath = File(downloadsPath, "FileFlow")
-
-        // Check if the folder exists, if not, create it
-        if (!specificFolderPath.exists()) {
-            specificFolderPath.mkdirs() // Create the folder if it doesn't exist
+        val fileFlowDir = context.getExternalFilesDir("FileFlow") // Modify path if needed
+        if (fileFlowDir != null && fileFlowDir.exists()) {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.setDataAndType(Uri.fromFile(fileFlowDir), "*/*")
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            context.startActivity(intent)
+            result.success(true)
+        } else {
+            result.error("FileFlow folder not found", "", "")
         }
-
-        // Set the data and type on the intent to open the directory
-        fileManagerIntent.setDataAndType(Uri.parse(specificFolderPath.toURI().toString()), "resource/folder")
-        fileManagerIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
-        // Start the activity with the intent
-        context.startActivity(fileManagerIntent)
-        result.success(true)
     } catch (e: Exception) {
-        result.error("ERROR", "Unable to open the file manager: ${e.localizedMessage}", "")
+        result.error("$e", "Unable to open the folder", "")
     }
 }
 }
